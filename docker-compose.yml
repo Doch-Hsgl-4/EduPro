@@ -1,9 +1,10 @@
 services:
   app:
-    image: php:8.2-apache
+    build: ./php
     container_name: academy_app
     volumes:
-      - ./backend:/var/www/html
+      - ./frontend:/var/www/html
+      - ./backend:/var/www/html/backend
     ports:
       - "8080:80"
     depends_on:
