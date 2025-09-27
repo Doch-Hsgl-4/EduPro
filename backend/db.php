@@ -1,5 +1,7 @@
 <?php
 // db.php — подключение к MySQL
+require_once __DIR__ . "/logger.php";
+
 
 $host = 'db'; // имя сервиса из docker-compose, а не localhost
 $dbname = 'academy';

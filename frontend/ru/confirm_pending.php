@@ -141,11 +141,11 @@ async function checkStatus() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ csrf }),
-      credentials: 'same-origin'
+      credentials: 'include'
     });
     const data = await res.json();
     if (data.confirmed) {
-      window.location.href = "map.php";
+      window.location.href = "/ru/map.php";
     } else {
       statusMsg.textContent = "Почта ещё не подтверждена.";
     }

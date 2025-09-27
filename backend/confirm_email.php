@@ -1,5 +1,7 @@
 <?php
 // /backend/confirm_email.php
+require_once __DIR__ . "/logger.php";
+
 require_once __DIR__ . "/../db.php";
 
 if (!isset($_GET['token'])) {

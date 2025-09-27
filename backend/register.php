@@ -1,5 +1,8 @@
 <?php
 // /backend/register.php
+require_once __DIR__ . "/logger.php";
+
+
 declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 
@@ -141,17 +144,19 @@ try {
     } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
     }
-
-    $verification_token = bin2hex(random_bytes(32));
+    $confirm_token = bin2hex(random_bytes(32));
     $session_token = bin2hex(random_bytes(32));
 
     $pdo->beginTransaction();
     $stmt = $pdo->prepare("
-        INSERT INTO users (username, email, password_hash, role, verified, verification_token, session_token)
-        VALUES (?, ?, ?, 'student', 0, ?, ?)
+        INSERT INTO users (
+            username, email, password_hash, role,
+            email_confirmed, confirm_token, confirm_sent_at, session_token
+        ) VALUES (?, ?, ?, 'student', 0, ?, NOW(), ?)
     ");
-    $stmt->execute([$username, $emailLower, $hash, $verification_token, $session_token]);
+    $stmt->execute([$username, $emailLower, $hash, $confirm_token, $session_token]);
     $pdo->commit();
+
 
     // успех — запись попытки
     $pdo->prepare("INSERT INTO registration_attempts (ip_hash, email_hash, success) VALUES (?,?,1)")

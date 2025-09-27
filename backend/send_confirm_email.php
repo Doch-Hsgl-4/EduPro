@@ -1,8 +1,10 @@
 <?php
 // /backend/send_confirm_email.php
+require_once __DIR__ . "/logger.php";
+
 header("Content-Type: application/json; charset=UTF-8");
 
-session_start();
+
 
 // Проверка CSRF (double-submit cookie)
 $input = json_decode(file_get_contents("php://input"), true);
@@ -15,13 +17,13 @@ if (!isset($input['csrf'], $_COOKIE['csrf_token']) || $input['csrf'] !== $_COOKI
 require_once __DIR__ . "/../db.php"; // в db.php у тебя PDO $pdo
 
 // Получаем email пользователя из сессии или куки (как у тебя реализовано при регистрации)
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_COOKIE['session_token'])) {
     echo json_encode(['ok' => false, 'error' => 'Нет авторизации']);
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT id, email, email_confirmed FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
+$stmt = $pdo->prepare("SELECT id, email, email_confirmed FROM users WHERE session_token = ?");
+$stmt->execute([$_COOKIE['session_token']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user) {
     echo json_encode(['ok' => false, 'error' => 'Пользователь не найден']);
